@@ -22,6 +22,7 @@ const monthRegisterRouter = require('./router/registers/monthRegisterRouter')
 const publicOtherQuotesRouter = require('./router/publicData/otherQuotesRouter')
 const publicLastValueRouter = require('./router/publicData/lastValuePublicRouter')
 const scheduledTasksRouter = require('./router/scheduledTasks/scheduledTasksRouter')
+const healthCheckRouter = require('./router/healthCheck/healthCheckRouter')
 const auth = require('./middlewares/auth');
 const { handlerError } = require('./middlewares/middlewareError')
 
@@ -55,6 +56,7 @@ app.use('/monthregister', monthRegisterRouter)
 app.use('/public/otherquotes', publicOtherQuotesRouter)
 app.use('/public/lastvalue', publicLastValueRouter)
 app.use('/__space/v0/actions', scheduledTasksRouter)
+app.use('/healthcheck', healthCheckRouter)
 app.use(handlerError)
 
 const port = config.PORT;
