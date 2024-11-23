@@ -13,12 +13,10 @@ class OtherQuotesService {
     async uploadNewQuote() {
         const lastQuote = await otherQuotesDao.getLastQuote()
         const lastQuotesDate = lastQuote[0].date
-        const dateForCriptoFetch = moment(lastQuotesDate).add(24, 'hours').format('DD-MM-YYYY')
 
         const dollarData = await criptoYaApiClient.getDollarData()
-        const ethereumQuote = await coinGeckoApiClient.getEthereumQuoteByDate(dateForCriptoFetch)
-        const litecoinQuote = await coinGeckoApiClient.getLitecoinQuoteByDate(dateForCriptoFetch)
-        const bitcoinQuote = await coinGeckoApiClient.getBitcoinQuoteByDate(dateForCriptoFetch)
+        const ethereumQuote = await coinGeckoApiClient.getEthereumQuoteByDate()
+        const bitcoinQuote = await coinGeckoApiClient.getBitcoinQuoteByDate()
 
         let quotes = ""
         try {
@@ -27,7 +25,7 @@ class OtherQuotesService {
                 dollarData.oficial.price - (dollarData.oficial.price * 0.045),
                 dollarData.mep.al30["24hs"].price,
                 ethereumQuote,
-                litecoinQuote,
+                0,
                 bitcoinQuote
             )
         } catch (error) {
@@ -58,19 +56,18 @@ class OtherQuotesService {
 
     async getCriptoQuotes() {
         const quotesLastDay = await otherQuotesDao.getLastQuote()
-        const actualPrices = await coinGeckoApiClient.getActualPriceCriptos()
+
+        const bitcoinPrice = await coinGeckoApiClient.getBitcoinQuoteByDate()
+        const ethereumPrice = await coinGeckoApiClient.getEthereumQuoteByDate()
+
         return {
             bitcoin: {
-                actual: actualPrices.bitcoin.usd,
+                actual: bitcoinPrice,
                 lastDay: quotesLastDay[0].quotes.bitcoin
             },
             ethereum: {
-                actual: actualPrices.ethereum.usd,
+                actual: ethereumPrice,
                 lastDay: quotesLastDay[0].quotes.ethereum
-            },
-            litecoin: {
-                actual: actualPrices.litecoin.usd,
-                lastDay: quotesLastDay[0].quotes.litecoin
             }
         }
     }
