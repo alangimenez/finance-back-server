@@ -1,5 +1,4 @@
 const otherQuotesDao = require('../../repository/daos/investments/otherQuotesDao')
-const coinGeckoApiClient = require('../../clients/coinGeckoApiClient')
 const criptoYaApiClient = require('../../clients/criptoYaApiClient')
 const logService = require('../logs/logService')
 const OtherQuotesModel = require('../../models/model/otherQuotesModel')
@@ -15,8 +14,8 @@ class OtherQuotesService {
         const lastQuotesDate = lastQuote[0].date
 
         const dollarData = await criptoYaApiClient.getDollarData()
-        const ethereumQuote = await coinGeckoApiClient.getEthereumQuoteByDate()
-        const bitcoinQuote = await coinGeckoApiClient.getBitcoinQuoteByDate()
+        const ethereumQuote = await criptoYaApiClient.getEthereumQuote()
+        const bitcoinQuote = await criptoYaApiClient.getBitcoinQuote()
 
         let quotes = ""
         try {
@@ -57,8 +56,8 @@ class OtherQuotesService {
     async getCriptoQuotes() {
         const quotesLastDay = await otherQuotesDao.getLastQuote()
 
-        const bitcoinPrice = await coinGeckoApiClient.getBitcoinQuoteByDate()
-        const ethereumPrice = await coinGeckoApiClient.getEthereumQuoteByDate()
+        const bitcoinPrice = await criptoYaApiClient.getBitcoinQuote()
+        const ethereumPrice = await criptoYaApiClient.getEthereumQuote()
 
         return {
             bitcoin: {
