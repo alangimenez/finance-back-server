@@ -118,20 +118,30 @@ class LastValueService {
     }
 
     async saveQuotesAndOtherQuotes() {
-        const quotes = await quotesService.saveInfoFromIol()
-        const otherQuotes = await otherQuotesService.uploadNewQuote()
+        const lastValue = await this.#buildLastValue()
 
         const lastRegister = await lastValueRepository.getLastRegister()
         await lastValueRepository.deleteLastRegister(lastRegister._id)
-        await lastValueRepository.subirInfo({
-            date: new Date(),
-            quotes: quotes,
-            otherQuotes: otherQuotes
-        })
+        await lastValueRepository.subirInfo(lastValue)
 
         logService.createNewMessage("El relevamiento diario de cotizaciones finalizó con éxito a las : " + new Date())
 
         return
+    }
+
+    async getQuotesInRealTime() {
+        return await this.#buildLastValue()
+    }
+
+    async #buildLastValue() {
+        const quotes = await quotesService.saveInfoFromIol()
+        const otherQuotes = await otherQuotesService.uploadNewQuote()
+
+        return {
+            date: new Date(),
+            quotes: quotes,
+            otherQuotes: otherQuotes
+        }
     }
 
     #getLastPriceInUsd(price, currency, usd) {

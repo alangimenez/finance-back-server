@@ -7,4 +7,9 @@ router.get('/', async (req, res) => {
     res.status(200).json(datos)
 })
 
+router.get('/actualquotes', async (req, res) => {
+    const response = await lastValueService.getQuotesInRealTime()
+    res.status(200).json(response)
+})
+
 module.exports = router
