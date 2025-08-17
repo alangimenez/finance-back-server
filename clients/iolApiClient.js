@@ -82,8 +82,6 @@ class IolApiClient{
     }
 
     async getAccessTokenFromIol() {
-        console.log("IOL_USER: "  + IOL_USER)
-        console.log("IOL_PASSWORD: " + IOL_PASSWORD)
         const tokenResponse = await fetch(
             `https://api.invertironline.com/token`,
             {
