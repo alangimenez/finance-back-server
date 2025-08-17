@@ -1,5 +1,6 @@
 const otherQuotesDao = require('../../repository/daos/investments/otherQuotesDao')
 const criptoYaApiClient = require('../../clients/criptoYaApiClient')
+const cafciApiClient = require('../../clients/cafciApiClient')
 const logService = require('../logs/logService')
 const OtherQuotesModel = require('../../models/model/otherQuotesModel')
 const { addDays } = require('../../utils/utils')
@@ -16,6 +17,10 @@ class OtherQuotesService {
         const dollarData = await criptoYaApiClient.getDollarData()
         const ethereumQuote = await criptoYaApiClient.getEthereumQuote()
         const bitcoinQuote = await criptoYaApiClient.getBitcoinQuote()
+        const fciAccionesResponse = await cafciApiClient.getFciQuote(406, 730)
+        const fciLiquidoResponse = await cafciApiClient.getFciQuote(519, 1048)
+        const fciAcciones = parseFloat(fciAccionesResponse.data.info.diaria.actual.vcpUnitario)
+        const fciLiquido = parseFloat(fciLiquidoResponse.data.info.diaria.actual.vcpUnitario)
 
         let quotes = ""
         try {
@@ -25,7 +30,9 @@ class OtherQuotesService {
                 dollarData.mep.al30["24hs"].price,
                 ethereumQuote,
                 0,
-                bitcoinQuote
+                bitcoinQuote,
+                fciAcciones,
+                fciLiquido
             )
         } catch (error) {
             logService.createNewMessage("Hubo un error creando OtherQuotesModel en uploadNewQuotes. Error: " + error)
