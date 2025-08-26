@@ -10,8 +10,7 @@ class otherQuotesDao extends CrudMongo {
 
     async getLastQuote() {
         try {
-            const result = await this.model.find().sort({date:-1}).limit(1)
-            return result;
+            return await this.model.find().sort({date:-1}).limit(1)
         } catch (e) {
             console.log(e.message)
         }

@@ -7,4 +7,9 @@ router.get('/cripto', async (req, res) => {
     res.json(response).status(200)
 })
 
+router.get('/fci', async (req, res) => {
+    const response = await otherQuotesService.getFciQuotes()
+    res.json(response).status(200)
+})
+
 module.exports = router
