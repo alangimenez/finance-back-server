@@ -77,6 +77,18 @@ class OtherQuotesService {
             }
         }
     }
+
+    async getFciQuotes() {
+        const quotesLastDay = await otherQuotesDao.getLastQuote()
+
+        const fciLiquidoQuote = quotesLastDay[0].quotes.fciLiquido
+        const fciAccionesQuote = quotesLastDay[0].quotes.fciAcciones
+
+        return {
+            fciLiquido: fciLiquidoQuote,
+            fciAcciones: fciAccionesQuote
+        }
+    }
 }
 
 const otherQuotesService = new OtherQuotesService()
