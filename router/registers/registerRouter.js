@@ -51,9 +51,4 @@ router.post('/batch/excel', async (req, res) => {
     res.status(201).json(result)
 })
 
-router.get('/account', async (req, res) => {
-    const result = await registerService.getRegisterByAccount(req.query.account)
-    res.status(200).json(result)
-})
-
 module.exports = router
