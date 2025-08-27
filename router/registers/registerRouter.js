@@ -46,4 +46,9 @@ router.get('/excel', async (req, res) => {
     res.status(200).json(result)
 })
 
+router.post('/batch/excel', async (req, res) => {
+    const result = await registerService.saveBatchExcelRegisters(req.body)
+    res.status(201).json(result)
+})
+
 module.exports = router

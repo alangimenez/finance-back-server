@@ -1,7 +1,7 @@
 const registerRepository = require('../../repository/daos/registers/registerDao');
 const accountService = require('../accounts/accountService');
-const { transformDate, convertRequest } = require('../../utils/utils')
-const { formatDateOfMongo } = require('../../formatter/accounts/accountFormatter')
+const { transformDate, convertRequest, parseDate } = require('../../utils/utils')
+const { formatDateOfMongo } = require('../../formatter/accounts/accountFormatter');
 
 class RegistersService {
     constructor() { }
@@ -93,6 +93,29 @@ class RegistersService {
         await accountService.updateBalance(amount, batchRegisters.credit, creditCurrency, "subtract")
 
         return ({ "message": "ok" })
+    }
+
+    async saveBatchExcelRegisters(request) {
+        let successfulRegisters = 0
+        let errors = []
+        await Promise.all(request.map(async register => {
+            try {
+                register.date = parseDate(register.date)
+                register.load = false
+                register.debitAmount = Number(String(register.debitAmount).replace(",", "."))
+                register.creditAmount = Number(String(register.creditAmount).replace(",", "."))
+                let response = await registerRepository.subirInfo(register)
+                if (response._id) successfulRegisters++
+            } catch (error) {
+                errors.push({ "register": register, "error": error.message })
+            }
+        }))
+
+        return {
+            "registersToSave": request.length,
+            "successfulRegisters": successfulRegisters,
+            "errors": errors
+        }
     }
 
     async saveEarning(request) {
