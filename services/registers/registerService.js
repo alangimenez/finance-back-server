@@ -155,22 +155,31 @@ class RegistersService {
     async getRegisterForExcel() {
         const registers = await registerRepository.getRegistersForExcel()
         const response = []
-        registers.forEach(it => {
-            let object = {
-                _id: it._id,
-                date: formatDateOfMongo(it.date),
-                debit: it.debit,
-                debitCurrency: it.debitCurrency,
-                credit: it.credit,
-                creditCurrency: it.creditCurrency,
-                debitAmount: String(it.debitAmount).replace(".", ","),
-                creditAmount: String(it.creditAmount).replace(".", ","),
-                comments: it.comments,
-                type: it.type
-            }
-            response.push(object)
-        })
+        registers.forEach(it => response.push(this.#convertEntityToResponse(it)))
         return response
+    }
+
+    async getRegisterByAccount(account) {
+        const registers = await registerRepository.getRegistersByAccount(account)
+        const response = []
+        registers.forEach(it => response.push(this.#convertEntityToResponse(it)))
+        return response
+    }
+
+    #convertEntityToResponse(entity) {
+        return {
+            id: entity._id,
+            date: transformDate(entity.date),
+            debit: entity.debit,
+            debitCurrency: entity.debitCurrency,
+            debitAmount: entity.debitAmount,
+            credit: entity.credit,
+            creditCurrency: entity.creditCurrency,
+            creditAmount: entity.creditAmount,
+            comments: entity.comments,
+            type: entity.type,
+            load: entity.load
+        }
     }
 }
 

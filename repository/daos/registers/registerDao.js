@@ -14,7 +14,7 @@ class registerDao extends CrudMongo {
             return result;
         } catch (e) {
             console.log(e.message)
-        } 
+        }
     }
 
     async getLastTenRegisters() {
@@ -48,6 +48,19 @@ class registerDao extends CrudMongo {
         try {
             const result = await this.model.find({ load: 'false' }).sort({ $natural: 1 })
             return result
+        } catch (e) {
+            console.log(e.message)
+        }
+    }
+
+    async getRegistersByAccount(account) {
+        try {
+            return await this.model.find({
+                $or: [
+                    { debit: account },
+                    { credit: account }
+                ]
+            }).sort({ date: -1 });
         } catch (e) {
             console.log(e.message)
         }
