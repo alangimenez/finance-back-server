@@ -172,6 +172,10 @@ class RegistersService {
         })
         return response
     }
+
+    async getRegisterByAccount(account) {
+        return await registerRepository.getRegistersByAccount(account)
+    }
 }
 
 const registersService = new RegistersService()
