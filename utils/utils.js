@@ -69,6 +69,36 @@ const getActualDayInZero = () => {
     return moment().hours(0).minutes(0).seconds(0).milliseconds(0).toDate()
 }
 
+const parseDate = (str) => {
+    // Validar formato YYYY/MM/DD con regex
+    const regex = /^(\d{4})\/(\d{2})\/(\d{2})$/;
+    const match = str.match(regex);
+
+    if (!match) {
+        throw new Error("Formato inválido. Debe ser YYYY/MM/DD.");
+    }
+
+    let [_, anio, mes, dia] = match;
+
+    // Convertir a números
+    anio = parseInt(anio, 10);
+    mes = parseInt(mes, 10) - 1; // Base 0
+    dia = parseInt(dia, 10);
+
+    const fecha = new Date(anio, mes, dia);
+
+    // Verificar que la fecha creada coincide (ej. 2025/02/30 sería inválida)
+    if (
+        fecha.getFullYear() !== anio ||
+        fecha.getMonth() !== mes ||
+        fecha.getDate() !== dia
+    ) {
+        throw new Error("Fecha inválida.");
+    }
+
+    return fecha;
+}
+
 module.exports = {
     diffInDaysBetweenDateAndToday,
     roundToTwo,
@@ -77,7 +107,8 @@ module.exports = {
     addDays,
     addSpecificDays,
     addOneMonth,
-    addOneYear, 
+    addOneYear,
     getMonthAndYearFromDate,
-    getActualDayInZero
+    getActualDayInZero, 
+    parseDate
 }
