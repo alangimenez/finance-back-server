@@ -16,7 +16,7 @@ class CafciApiClient {
             }
         }
         try {
-            const response = await fetch(`https://api.cafci.org.ar/fondo/${fondo}/clase/${clase}/ficha`, requestOptions)
+            const response = await fetch(`https://api.pub.cafci.org.ar/fondo/${fondo}/clase/${clase}/ficha`, requestOptions)
             if (response.status !== 200) {
                 throw new Error(`Error fetching FCI quote: ${response.statusText}`)
             }
