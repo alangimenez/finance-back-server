@@ -70,6 +70,16 @@ class LastValueService {
         return result[0]
     }
 
+    async getInfoBySimbol(simbolo) {
+        const lastRegister = await lastValueRepository.getLastRegister()
+        return lastRegister.quotes.find(bond => bond.simbolo === simbolo)
+    }
+
+    async getDolarMep() {
+        const lastRegister = await lastValueRepository.getLastRegister()
+        return lastRegister.otherQuotes.quotes.dolarMep
+    }
+
     async getAll() {
         let lastValues = await lastValueRepository.leerInfo()
 

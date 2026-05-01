@@ -1,4 +1,5 @@
 const fetch = require('node-fetch')
+const logService = require('../services/logs/logService')
 
 class CafciApiClient {
     constructor() { }
@@ -20,9 +21,11 @@ class CafciApiClient {
             if (response.status !== 200) {
                 throw new Error(`Error fetching FCI quote: ${response.statusText}`)
             }
-            return await response.json()
+            const data = await response.json()
+            return data.data.info.diaria.actual.vcpUnitario
         } catch (error) {
-            throw new Error(`Error fetching FCI quote: ${error.message}`)
+            logService.createNewMessage("Hubo un error haciendo fetch en CafciApiClient.getFciQuote. Error: " + error.message)
+            return 0
         }
     }
 }

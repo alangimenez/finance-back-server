@@ -5,9 +5,8 @@ const coleccion = 'tir';
 
 const tirSchema = new Schema ({
     bondName: {type: String},
-    date: {type: String},
-    time: {type: String},
-    tir: {type: mongoose.Types.Decimal128}
+    datetime: {type: Date},
+    tir: {type: Number}
 })
 
 const Tir = mongoose.model(coleccion, tirSchema);

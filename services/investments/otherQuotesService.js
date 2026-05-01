@@ -19,8 +19,8 @@ class OtherQuotesService {
         const bitcoinQuote = await criptoYaApiClient.getBitcoinQuote()
         const fciAccionesResponse = await cafciApiClient.getFciQuote(406, 730)
         const fciLiquidoResponse = await cafciApiClient.getFciQuote(519, 1048)
-        const fciAcciones = parseFloat(fciAccionesResponse.data.info.diaria.actual.vcpUnitario)
-        const fciLiquido = parseFloat(fciLiquidoResponse.data.info.diaria.actual.vcpUnitario)
+        const fciAcciones = parseFloat(fciAccionesResponse)
+        const fciLiquido = parseFloat(fciLiquidoResponse)
 
         let quotes = ""
         try {

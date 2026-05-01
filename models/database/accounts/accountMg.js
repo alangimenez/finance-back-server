@@ -9,7 +9,9 @@ const accountSchema = new Schema ({
     assetType: {type: String},
     ticket: {type: String},
     balance: {type: Number},
-    currency: {type: String}
+    currency: {type: String},
+    ticketArs: {type: String},
+    rating: {type: String}
 })
 
 const Account = mongoose.model(coleccion, accountSchema);

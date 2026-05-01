@@ -70,13 +70,24 @@ class TirService {
             }
 
             // incorpora el monto de intereses en el array del cashflow
-            for (let k = 0; k < cashFlowsData[i].dateInterest.length; k++) {
-                cashFlow[diffInDaysBetweenDateAndToday(new Date(cashFlowsData[i].dateInterest[k]))] = cashFlowsData[i].amountInterest[k]
+            for (let k = 0; k < cashFlowsData[i].dateOfPayment.length; k++) {
+                cashFlow[diffInDaysBetweenDateAndToday(new Date(cashFlowsData[i].dateOfPayment[k]))] = cashFlowsData[i].amountInterest[k] + cashFlowsData[i].amountAmortization[k]
             }
 
             // incorpora el gasto de inversión al momento cero con la última cotización
-            const lastValueBond = await lastValueService.getInfoByBondName(cashFlowsData[i].bondName);
-            cashFlow.unshift(-(lastValueBond.closePrice - 1 + 1))
+            const lastValueBond = await lastValueService.getInfoBySimbol(cashFlowsData[i].ticket);
+            let precioUsd;
+            if (lastValueBond.moneda == 1) {
+                const dolarMep = await lastValueService.getDolarMep()
+                precioUsd = lastValueBond.ultimoPrecio / dolarMep
+            } else {
+                precioUsd = lastValueBond.ultimoPrecio
+            }
+            cashFlow.unshift(-precioUsd)
+
+            console.log('lastPrice: ' + lastValueBond.ultimoPrecio)
+            console.log('cashflow len: ' + cashFlow.length)
+            cashFlow.forEach((value, index) => { if (value !== 0) console.log(`cashflow[${index}]: ${value}`) })
 
             const tiempoTranscurrido = Date.now();
             const hoy = new Date(tiempoTranscurrido);
@@ -85,15 +96,16 @@ class TirService {
             let tirDaily = irr(cashFlow)
             let tirAnnual = Math.pow(1 + tirDaily, 365)
             tirAnnualRound = roundToTwo(((tirAnnual) - 1))
-            const index = tirData.findIndex((e) => e.bondName == lastValueBond.bondName)
+            const index = tirData.findIndex((e) => e.ticket == lastValueBond.simbolo)
             if (index >= 0) {
-                tirRepository.modifyData(lastValueBond.bondName, hoy.toLocaleDateString(), hoy.toLocaleTimeString(), tirAnnualRound)
+                console.log('entra a modificar')
+                tirRepository.modifyData(lastValueBond.simbolo, hoy, tirAnnualRound)
             } else {
+                console.log('entra a crear')
                 tirRepository.subirInfo(
                     new TirModel(
-                        cashFlowsData[i].bondName,
-                        "data",
-                        "time",
+                        cashFlowsData[i].ticket,
+                        hoy,
                         tirAnnualRound
                     )
                 ) 
