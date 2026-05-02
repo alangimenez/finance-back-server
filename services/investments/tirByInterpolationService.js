@@ -1,5 +1,6 @@
 const cashFlowRepository = require('../../repository/daos/investments/cashflowDao');
 const lastValueRepository = require('../../repository/daos/investments/lastValueDao');
+const loggerService = require('../logs/logService');
 
 const MAX_TIR_ITERATIONS = 1_000_000;
 const STEP = 0.000001;
@@ -10,7 +11,7 @@ class TirByInterpolationService {
     async getTirs() {
         // #9: ambas queries corren en paralelo
         const [cashflows, lastRegister] = await Promise.all([
-            cashFlowRepository.leerInfo(),
+            cashFlowRepository.getActiveBonds(),
             lastValueRepository.getLastRegister()
         ]);
 
@@ -18,7 +19,8 @@ class TirByInterpolationService {
         const mep = lastRegister.otherQuotes.quotes.dolarMep;
 
         const promises = cashflows.map((bond, i) => this.#calculateTir(i, bond, quotesMap, mep));
-        return Promise.all(promises);
+        const results = await Promise.all(promises);
+        return results.filter(r => r.value !== 0.0);
     }
 
     async #calculateTir(id, bond, quotesMap, mep) {
@@ -34,7 +36,7 @@ class TirByInterpolationService {
             };
         } catch (err) {
             // #5: mensaje sin terminología de Go
-            console.error(`[Bond ${id}] Error calculando TIR de ${bond.ticket}: ${err.message}`);
+            loggerService.createNewMessage(`Error calculando TIR de ${bond.ticket}: ${err.message}`);
             return {
                 key: bond.ticket,
                 value: 0.0,
