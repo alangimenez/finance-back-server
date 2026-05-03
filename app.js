@@ -25,6 +25,7 @@ const publicRegistersRouter = require('./router/publicData/publicRegistersRouter
 const scheduledTasksRouter = require('./router/scheduledTasks/scheduledTasksRouter')
 const healthCheckRouter = require('./router/healthCheck/healthCheckRouter')
 const publicTirRouter = require('./router/publicData/publicTirRouter')
+const logsRouter = require('./router/logs/logsRouter')
 const auth = require('./middlewares/auth');
 const { handlerError } = require('./middlewares/middlewareError')
 
@@ -59,6 +60,7 @@ app.use('/public/otherquotes', publicOtherQuotesRouter)
 app.use('/public/lastvalue', publicLastValueRouter)
 app.use('/public/registers', publicRegistersRouter)
 app.use('/public/tir', publicTirRouter)
+app.use('/public/logs', logsRouter)
 app.use('/__space/v0/actions', scheduledTasksRouter)
 app.use('/healthcheck', healthCheckRouter)
 app.use(handlerError)
